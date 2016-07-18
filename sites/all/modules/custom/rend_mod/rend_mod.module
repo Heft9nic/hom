@@ -1,0 +1,90 @@
+<?php
+
+
+/**
+ * Implements hook_menu().
+ */
+function rend_mod_menu() {
+  $items['simple_page'] = array(
+    'title' => 'Simple page',
+    'page callback' => 'rend_simple_page_content',
+    'access callback' => TRUE,
+    'menu_name' => 'main-menu',
+    'file' => 'rend_mod.pages.inc',
+    'options' => array('attributes' => array('class' => array('test-class'))),
+  );
+
+
+
+  $items['simple_page/sub-user-stas'] = array(
+    'title' => 'Simple page stas',
+    'page callback' => 'rend_simple_page_user_stas',
+    'file' => 'rend_mod.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+    'menu_name' => 'main-menu',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+
+    $items['simple_page/sub-user-list'] = array(
+    'title' => 'Simple page list123',
+    'page callback' => 'rend_simple_page_user_list',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+    'menu_name' => 'main-menu',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function rend_mod_theme($existing, $type, $theme, $path) {
+  $items = array();
+
+  $items['rend_list_items'] = array(
+    'render element' => 'list',
+    'path' => drupal_get_path('module', 'rend_mod') . '/templates',
+    'template' => 'block-rend-mod-custom-list',
+  );
+
+  $items['rend_list_items_2'] =array(
+    'variables' => array('message' => NULL),
+    'path' => drupal_get_path('module', 'rend_mod') . '/templates' ,
+    'template' => 'block-rend-mod-custom-list-2',
+
+
+  );
+
+  return $items;
+}
+
+function rend_simple_page_user_list() {
+  $mess_user = t('list user site');
+  $mess_root = t('list root site');
+
+
+  $content = array(
+    '#theme' => 'rend_list_items',
+
+    'mess_user' => array(
+      '#message' => $mess_user,
+      '#theme' => 'rend_list_items_2',
+    ),
+
+    'mess_root' => array(
+      '#message' => $mess_root,
+      '#theme' => 'rend_list_items_2',
+    ),
+    '#attached' => array(
+      'css' => array(
+        drupal_get_path('module', 'rend_mod') . '/css/styles.css',
+      ),
+    ),
+  );
+  return $content;
+}
