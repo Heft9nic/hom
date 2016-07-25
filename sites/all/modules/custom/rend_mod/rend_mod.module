@@ -36,6 +36,18 @@ function rend_mod_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
+    $items['simple_page/Form-page'] = array(
+      'title' => 'Example Form',
+      'type' => MENU_LOCAL_TASK,
+      'access arguments' => array('access content'),
+      'page callback' => 'drupal_get_form',
+      'page arguments'=>array('rend_mod_form'),
+      'menu_name' => 'main-menu',
+      'access callback' => TRUE,
+      'expanded' => TRUE,
+
+    );
+
   return $items;
 
 }
@@ -57,8 +69,11 @@ function rend_mod_theme($existing, $type, $theme, $path) {
     'path' => drupal_get_path('module', 'rend_mod') . '/templates' ,
     'template' => 'block-rend-mod-custom-list-2',
 
-
   );
+
+
+
+
 
   return $items;
 }
@@ -78,7 +93,7 @@ function rend_simple_page_user_list() {
 
     'mess_root' => array(
       '#message' => $mess_root,
-      '#theme' => 'rend_list_items_2',
+      '#theme' => 'create_node_form',
     ),
     '#attached' => array(
       'css' => array(
@@ -86,5 +101,78 @@ function rend_simple_page_user_list() {
       ),
     ),
   );
+
+ $content['form'] = drupal_get_form('rend_mod_form');
+
   return $content;
 }
+
+/**
+ * Implements hook_block_view().
+ */
+function rend_mod_block_view($delta = '') {
+  $block = array();
+
+  $block['content'] = drupal_get_form('rend_mod_form');
+
+  return $block;
+}
+
+
+/**
+ * Implements hook_form().
+ */
+function rend_mod_form($node, &$form_state) {
+
+  $form = array();
+
+
+  $form['name']=array(
+    '#type'=>'textfield',
+    '#title'=>t('Enter your name'),
+    '#description'=>t('Your first name goes here')
+  );
+  $form['last_name']=array(
+    '#type'=>'textfield',
+    '#title'=>t('Enter your Last name'),
+    '#description'=>t('Your Last name goes here')
+  );
+
+  $form['email']=array(
+    '#type'=>'textfield',
+    '#title'=>t('Enter your email'),
+    '#description'=>t('Your email goes here')
+  );
+
+  $form['country']=array(
+    '#type'=>'select',
+    '#title'=>t('Select your country'),
+    '#options'=>array('USA','UK','France', 'EN')
+  );
+
+  $form['submit']=array(
+    '#type'=>'submit',
+    '#value'=>t('Submit')
+  );
+
+  return $form;
+}
+
+
+function rend_mod_form_validate($form, &$form_state) {
+
+  if (empty($form_state['values']['name']))
+    form_set_error('name', 'Name cannot be empty');
+  else if(empty($form_state['values']['last_name']))
+    form_set_error('last_name', 'Last name cannot be empty' );
+  else if(filter_var($form_state['values']['email'], FILTER_VALIDATE_EMAIL) == false)
+    form_set_error('email', 'Email is not valid');
+}
+
+function rend_mod_form_submit($form, &$form_state) {
+  drupal_set_message('Form is submitted');
+}
+
+
+
+
