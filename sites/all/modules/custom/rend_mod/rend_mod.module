@@ -131,43 +131,41 @@ function rend_mod_form($node, &$form_state) {
     '#type'=>'textfield',
     '#title'=>t('Enter your name'),
     '#description'=>t('Your first name goes here'),
-    '#weight' => 1,
   );
   $form['last_name']=array(
     '#type'=>'textfield',
     '#title'=>t('Enter your Last name'),
     '#description'=>t('Your Last name goes here'),
-    '#weight' => 2,
   );
 
   $form['email']=array(
     '#type'=>'textfield',
     '#title'=>t('Enter your email'),
     '#description'=>t('Your email goes here'),
-    '#weight' => 3,
   );
 
   $form['country']=array(
     '#type'=>'select',
     '#title'=>t('Select your country'),
     '#options'=>array('USA','UK','France', 'EN'),
-    '#weight' => 6,
   );
 
-  $form['user_info'] = array(
-    '#type' => 'textfield',
-    '#title' => t(' Age'),
-    '#weight' => 5,
 
-
+  $form['birthdate'] = array(
+    '#title' => t('birthdate'),
+    '#type' => 'date',
+    '#description' => t('Select your birthdate'),
+  '#value' => array(
+    'month' => format_date(time(), 'custom', 'n'),
+    'day' => format_date(time(), 'custom', 'j'),
+    'year' => format_date(time(), 'custom', 'Y'),
+  ),
   );
 
     $form['submit']['default']=array(
     '#type'=>'submit',
     '#value'=>t('Submit'),
-    '#weight' => 1,
-    '#validate' => array('rend_mod_form_validate'),
-    '#submit' => array('rend_mod_form_submit'),
+    '#weight' => 12,
      );
 
   $form['submit']['custom']=array(
@@ -175,7 +173,7 @@ function rend_mod_form($node, &$form_state) {
     '#value'=>t('Submit custom'),
     '#weight' => 1,
     '#submit' => array('rend_mod_form_submit_custom'),
-    '#validate' => array('rend_mod_form_validate_custom'),
+
   );
 
 
@@ -191,26 +189,24 @@ function rend_mod_form_validate($form, &$form_state) {
     form_set_error('last_name', 'Last name cannot be empty' );
   else if(filter_var($form_state['values']['email'], FILTER_VALIDATE_EMAIL) == false)
     form_set_error('email', 'Email is not valid');
+  if ($form_state['values']['birthdate']['year'] < '1930') {
+    form_set_error('year', t('youre too old'));
+  } else if ($form_state['values']['birthdate']['year'] > '2010') {
+    form_set_error('year', t('you are too young'));
+  }
 }
 
 function rend_mod_form_submit($form, &$form_state) {
   drupal_set_message('Form is submitted classic');
 }
 
-function rend_mod_form_validate_custom($form, &$form_state) {
-    if (empty($form_state['values']['user_info']))
-      form_set_error('user_info', 'invalid input data');
-    else if (($form_state['values']['user_info'] <= 0) && ($form_state['values']['user_info'] < 100) ) {
-      form_set_error('user_info', 'invalid input data');
-
-
-    }
+function rend_mod_form_submit_custome() {
+  drupal_set_message('Form ok validate');
 }
 
-function rend_mod_form_submit_custom($form, &$form_state) {
-  drupal_get_messages('Form is submitted custom');
 
-}
+
+
 
 
 
